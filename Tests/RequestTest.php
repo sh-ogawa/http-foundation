@@ -1060,11 +1060,9 @@ class RequestTest extends TestCase
     public function getClientIpsForwardedAwsElbProvider()
     {
         // $remoteAddre           $httpXForwardedFor(origin ip, cloud front ip)  $expectedIps
-        return [
-            [
-                '192.168.10.11', '210.10.11.1, 52.10.11.1', '210.10.11.1'
-            ]
-        ];
+        return array(
+            array('192.168.10.11', '210.10.11.1, 52.10.11.1', '210.10.11.1')
+        );
     }
 
     public function testGetContentWorksTwiceInDefaultMode()
