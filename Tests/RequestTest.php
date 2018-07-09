@@ -1036,6 +1036,37 @@ class RequestTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider getClientIpsForwardedAwsElbProvider
+     */
+    public function testGetClientIpsOnlyXHttpForwardedForTrustedAwsElb($remoteAddre, $httpXForwardedFor, $expectedIp)
+    {
+        $request = new Request();
+
+        $server = array(
+            'REMOTE_ADDR' => $remoteAddre,
+            'HTTP_X_FORWARDED_FOR' => $httpXForwardedFor,
+        );
+
+        Request::setTrustedProxies(array($remoteAddre), Request::HEADER_X_FORWARDED_AWS_ELB);
+
+        $request->initialize(array(), array(), array(), array(), array(), $server);
+
+        $clientIp = $request->getClientIp();
+
+        $this->assertSame($expectedIp, $clientIp);
+    }
+
+    public function getClientIpsForwardedAwsElbProvider()
+    {
+        // $remoteAddre           $httpXForwardedFor(origin ip, cloud front ip)  $expectedIps
+        return [
+            [
+                '192.168.10.11', '210.10.11.1, 52.10.11.1', '210.10.11.1'
+            ]
+        ];
+    }
+
     public function testGetContentWorksTwiceInDefaultMode()
     {
         $req = new Request();
